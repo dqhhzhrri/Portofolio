@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D'Qhaizhar Ari Dhiaulhaq - Portfolio</title>
+    <script>document.documentElement.classList.add('js-enabled');</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-accent: #0ea5e9;
+            --neon-glow: 0 0 10px rgba(14, 165, 233, 0.5), 0 0 20px rgba(14, 165, 233, 0.3);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory; /* Efek slide per halaman */
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+        }
+
+        /* Slide Container */
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hanya sembunyikan jika JS aktif agar tidak blank jika JS dinonaktifkan */
+        .js-enabled .glass-card {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .js-enabled .glass-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .glass-card:hover {
+            box-shadow: var(--neon-glow);
+        }
+
+        /* Typography & Layout */
+        h1, h2 { color: var(--neon-accent); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        .text-center { text-align: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+        /* Slide 1: Profil */
+        .profile-img {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            border: 4px solid var(--neon-accent);
+            box-shadow: var(--neon-glow);
+            object-fit: cover;
+            margin: 0 auto 1.5rem auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .profile-img:hover { transform: scale(1.05) rotate(5deg); }
+        .skills-tag {
+            display: inline-block;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--neon-accent);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            border: 1px solid var(--neon-accent);
+            font-size: 0.85rem;
+        }
+
+        /* Interactive Buttons */
+        .btn-group { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;}
+        .cyber-btn {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-btn.active, .cyber-btn:hover {
+            background: var(--neon-accent);
+            color: #fff;
+            border-color: var(--neon-accent);
+            box-shadow: var(--neon-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Tab Content (Pengalaman & Project) */
+        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .timeline-item {
+            border-left: 2px solid var(--neon-accent);
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -6px; top: 0;
+            width: 10px; height: 10px; border-radius: 50%; background: var(--neon-accent); box-shadow: var(--neon-glow);
+        }
+
+        /* Slide 4: Social Media */
+        .social-container {
+            display: flex; justify-content: center; gap: 3rem; margin-top: 3rem;
+        }
+        .social-icon {
+            font-size: 4rem;
+            color: var(--text-muted);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+        }
+        .social-icon:hover {
+            color: var(--neon-accent);
+            transform: scale(1.3) translateY(-10px);
+            filter: drop-shadow(0 0 15px var(--neon-accent));
+        }
+
+        /* Background Particle Effect (Simple CSS) */
+        .bg-lines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px),
+            linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+            background-size: 50px 50px; opacity: 0.2;
+        }
+
+        /* Responsive Styles (Mobile & Tablet) */
+        @media (max-width: 768px) {
+            body {
+                scroll-snap-type: none;
+                height: auto;
+                overflow-y: auto;
+            }
+            .slide {
+                height: auto;
+                min-height: 100vh;
+                scroll-snap-align: none;
+                padding: 1.5rem 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .glass-card {
+                padding: 1.5rem;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .social-container {
+                gap: 1.5rem;
+            }
+            .social-icon {
+                font-size: 3rem;
+            }
+            .profile-img {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-lines"></div>
+
+    <section class="slide" id="profil">
+        <div class="glass-card">
+            <div class="grid-2">
+                <div>
+                    <img src="https://via.placeholder.com/200" alt="Foto D'Qhaizhar" class="profile-img">
+                </div>
+                <div>
+                    <h1>D'Qhaizhar Ari Dhiaulhaq</h1>
+                    <p style="color: var(--neon-accent); margin-bottom: 1rem; font-weight: bold;">
+                        Mahasiswa Teknologi Informasi ITS | NRP: 5027251083
+                    </p>
+                    <p style="margin-bottom: 1rem; line-height: 1.6; color: var(--text-muted);">
+                        Cepat beradaptasi, mampu bekerja di bawah tekanan, dan memiliki semangat belajar tinggi. 
+                        Memiliki pengalaman luas dalam kepemimpinan, administrasi, dan desain grafis. 
+                        Sangat meminati pengembangan perangkat lunak, cybersecurity, digital forensics, serta data analysis.
+                    </p>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Pendidikan:</strong><br>
+                        • Institut Teknologi Sepuluh Nopember (IPK 3.05)<br>
+                        • SMA Negeri 11 Kota Bekasi (Nilai Akhir 90,75)
+                    </div>
+                    <div>
+                        <span class="skills-tag">C/C++</span>
+                        <span class="skills-tag">Python</span>
+                        <span class="skills-tag">Java</span>
+                        <span class="skills-tag">SQL</span>
+                        <span class="skills-tag">Event Management</span>
+                        <span class="skills-tag">Canva & Desain</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="pengalaman">
+        <div class="glass-card">
+            <h2 class="text-center">Riwayat Pengalaman</h2>
+            <div class="btn-group">
+                <button class="cyber-btn active" data-target="org-exp" onclick="switchTab('pengalaman', 'org-exp')">Organisasi & Kepanitiaan</button>
+                <button class="cyber-btn" data-target="work-exp" onclick="switchTab('pengalaman', 'work-exp')">Pengalaman Kerja</button>
+            </div>
+
+            <div id="org-exp" class="tab-content active">
+                <div class="timeline-item">
+                    <h3>Ketua Fasilitator - Maju Bersama OSIS</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Juni 2025 - Sekarang</p>
+                    <p>Memberikan arahan, mengawasi anggota, dan mendengarkan evaluasi guna memperbaiki kualitas kepemimpinan.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Co-Founder - Duta Literasi Digital Indonesia</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Feb 2025 - Sekarang</p>
+                    <p>Melakukan branding, manajemen SDM, pengelolaan pendanaan, dan pengawasan anggota duta.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Staff Divisi Event - Elite X Pesraf 2026 & ARA 7.0</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">2025 - 2026</p>
+                    <p>Membuat guidebook, rundown, dan menjadi koordinator acara serta MC untuk kompetisi.</p>
+                </div>
+            </div>
+
+            <div id="work-exp" class="tab-content">
+                <div class="timeline-item">
+                    <h3>Graphic Design & Content Creator - Coco Edukasi Indonesia</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Januari 2023</p>
+                    <p>Merancang poster kegiatan edukasi, menyusun narasi promosi video, dan mengisi suara narator.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="project">
+        <div class="glass-card">
+            <h2 class="text-center">Showcase Project</h2>
+            <div class="btn-group">
+                <button class="cyber-btn active" onclick="filterProject('all')">Semua Waktu</button>
+                <button class="cyber-btn" onclick="filterProject('kuliah')">Tugas Kuliah</button>
+                <button class="cyber-btn" onclick="filterProject('pribadi')">Project Pribadi</button>
+                <button class="cyber-btn" onclick="filterProject('bersama')">Project Bersama</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="timeline-item project-item" data-type="pribadi">
+                    <h3>B2B Supplier Matchmaking Platform</h3>
+                    <span class="skills-tag">Project Pribadi</span> <span class="skills-tag">2026</span>
+                    <p style="margin-top: 10px;">Konseptualisasi dan pengembangan platform aplikasi yang menghubungkan supplier barang regional secara efisien.</p>
+                </div>
+                <div class="timeline-item project-item" data-type="bersama">
+                    <h3>Disaster Resilience Tracking App</h3>
+                    <span class="skills-tag">Project Bersama</span> <span class="skills-tag">Feb 2026</span>
+                    <p style="margin-top: 10px;">Dikembangkan dalam event Borneo Hackwknd bersama tim (Fio, Evan, dan Puput) untuk format respons kebencanaan.</p>
+                </div>
+                <div class="timeline-item project-item" data-type="kuliah">
+                    <h3>Visi & Identitas Angkatan "Eternity"</h3>
+                    <span class="skills-tag">Tugas Kuliah</span> <span class="skills-tag">April 2026</span>
+                    <p style="margin-top: 10px;">Merancang prinsip organisasi dan kerangka visi untuk angkatan ke-8 program studi.</p>
+                </div>
+                 <div class="timeline-item project-item" data-type="pribadi">
+                    <h3>Analisis Tren Pasar (Stockbit)</h3>
+                    <span class="skills-tag">Project Pribadi</span> <span class="skills-tag">April 2026</span>
+                    <p style="margin-top: 10px;">Evaluasi aktivitas pasar finansial dan pengaturan parameter trading untuk portofolio ekuitas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="sosial">
+        <div class="glass-card text-center" style="max-width: 600px;">
+            <h1 style="font-size: 3rem; margin-bottom: 0;">CONTACT ME!</h1>
+            <p style="color: var(--text-muted); margin-top: 10px;">Mari terhubung dan berkolaborasi.</p>
+            
+            <div class="social-container">
+                <a href="https://wa.me/6282261610521" target="_blank" class="social-icon" title="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://instagram.com/" target="_blank" class="social-icon" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://linkedin.com/in/d-qhaizhar-ari-dhiaulhaq" target="_blank" class="social-icon" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
