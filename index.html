@@ -3,329 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'Qhaizhar Ari Dhiaulhaq - Portfolio</title>
-    <script>document.documentElement.classList.add('js-enabled');</script>
+    <title>D'Qhaizhar - Creative Portfolio</title>
+    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* === BASE & TYPOGRAPHY (Robin Noguier Style) === */
         :root {
-            --bg-color: #0f172a;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --neon-accent: #0ea5e9;
-            --neon-glow: 0 0 10px rgba(14, 165, 233, 0.5), 0 0 20px rgba(14, 165, 233, 0.3);
+            --bg-dark: #09090b;
+            --surface: #18181b;
+            --surface-hover: #27272a;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #a1a1aa;
+            --accent: #d4d4d8; 
+            --neon: #e4e4e7;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Hide default cursor */ }
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            scroll-snap-type: y mandatory; /* Efek slide per halaman */
+            scroll-snap-type: y mandatory;
             height: 100vh;
             overflow-y: scroll;
             scroll-behavior: smooth;
         }
+        h1, h2, h3 { font-family: 'Syne', sans-serif; letter-spacing: -1px; }
+        
+        /* Noise Overlay (Natalie Almosa touch) */
+        .noise::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999; opacity: 0.04;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+        }
 
-        /* Slide Container */
+        /* === CUSTOM CURSOR === */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 10000; pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px; background-color: white;
+            transition: width 0.2s, height 0.2s;
+        }
+        .cursor-outline {
+            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.1s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        /* Cursor Hover States */
+        body.hovering .cursor-outline { width: 60px; height: 60px; background-color: rgba(255,255,255,0.1); border-color: transparent;}
+        body.hovering .cursor-dot { opacity: 0; }
+
+        /* === SLIDE LAYOUT === */
         .slide {
-            height: 100vh;
-            width: 100vw;
-            scroll-snap-align: start;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-            position: relative;
+            height: 100vh; width: 100vw; scroll-snap-align: start;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 2rem 5%; position: relative;
         }
+        .section-title { font-size: 4vw; margin-bottom: 2rem; text-align: center; font-weight: 800; text-transform: uppercase; color: var(--text-muted); opacity: 0.2; }
 
-        /* Glassmorphism Card */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 3rem;
-            width: 100%;
-            max-width: 1000px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* === BENTO BOX GRID (Sinan Tokmak Style) === */
+        .bento-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px;
+            gap: 1.5rem; width: 100%; max-width: 1200px;
         }
+        .bento-card {
+            background: var(--surface); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px; padding: 2rem;
+            transition: background 0.3s ease, transform 0.1s;
+            display: flex; flex-direction: column; justify-content: center;
+            /* 3D setup */
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        .bento-card:hover { background: var(--surface-hover); }
+        .bento-card.col-2 { grid-column: span 2; }
+        .bento-card.row-2 { grid-row: span 2; }
+        
+        .bento-content { transform: translateZ(30px); /* 3D pop out effect */ }
 
-        /* Hanya sembunyikan jika JS aktif agar tidak blank jika JS dinonaktifkan */
-        .js-enabled .glass-card {
-            opacity: 0;
-            transform: translateY(50px);
-        }
+        /* Profil Spesifik */
+        .profile-img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem; object-fit: cover; }
+        .tag-pill { display: inline-block; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.8rem; margin: 3px; }
 
-        .js-enabled .glass-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        /* === TABS & FILTER BUTTONS (Magnetic Buttons - Bruno Simon Style) === */
+        .magnetic-wrap { display: inline-block; padding: 10px; }
+        .btn-magnetic {
+            background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 30px; border-radius: 30px; font-family: 'Syne', sans-serif; font-weight: 600;
+            transition: background 0.3s, color 0.3s;
         }
+        .btn-magnetic.active { background: white; color: black; }
+        .filter-container { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; width: 100%; }
 
-        .glass-card:hover {
-            box-shadow: var(--neon-glow);
-        }
+        /* === EXPERIENCE ACCORDION / LIST === */
+        .exp-content { display: none; width: 100%; max-width: 1000px; animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .exp-content.active { display: block; }
+        .exp-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 2rem 0; display: flex; justify-content: space-between; align-items: flex-start; }
+        .exp-item h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .exp-item span { color: var(--text-muted); }
 
-        /* Typography & Layout */
-        h1, h2 { color: var(--neon-accent); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
-        .text-center { text-align: center; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        /* === PROJECT GALLERY (Karina Sirqueira Style) === */
+        .project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; width: 100%; max-width: 1100px; }
+        .project-card {
+            background: var(--surface); padding: 3rem 2rem; border-radius: 20px;
+            text-align: center; position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .project-card::before {
+            content: ''; position: absolute; top: 100%; left: 0; width: 100%; height: 100%;
+            background: white; transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 0;
+        }
+        .project-card:hover::before { top: 0; }
+        .project-card h3, .project-card p, .project-card .tag-pill {
+            position: relative; z-index: 1; transition: color 0.4s;
+        }
+        .project-card:hover h3, .project-card:hover p { color: black; }
+        .project-card:hover .tag-pill { border-color: black; color: black; }
 
-        /* Slide 1: Profil */
-        .profile-img {
-            width: 200px; height: 200px;
-            border-radius: 50%;
-            border: 4px solid var(--neon-accent);
-            box-shadow: var(--neon-glow);
-            object-fit: cover;
-            margin: 0 auto 1.5rem auto;
-            display: block;
-            transition: transform 0.5s ease;
+        /* === SOCIAL MEDIA (Robin Noguier / Natalie Almosa Style) === */
+        .huge-contact { font-size: 8vw; font-family: 'Syne', sans-serif; font-weight: 800; text-align: center; margin-bottom: 2rem; transition: transform 0.3s; }
+        .huge-contact:hover { -webkit-text-stroke: 2px white; color: transparent; } /* Hover outline effect */
+        
+        .social-icons { display: flex; justify-content: center; gap: 4rem; }
+        .soc-icon {
+            font-size: 3rem; color: white; display: flex; justify-content: center; align-items: center;
+            width: 80px; height: 80px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+            text-decoration: none; transition: background 0.3s, color 0.3s;
         }
-        .profile-img:hover { transform: scale(1.05) rotate(5deg); }
-        .skills-tag {
-            display: inline-block;
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--neon-accent);
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin: 5px;
-            border: 1px solid var(--neon-accent);
-            font-size: 0.85rem;
-        }
+        .soc-icon:hover { background: white; color: black; }
 
-        /* Interactive Buttons */
-        .btn-group { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;}
-        .cyber-btn {
-            background: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--glass-border);
-            padding: 10px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .cyber-btn.active, .cyber-btn:hover {
-            background: var(--neon-accent);
-            color: #fff;
-            border-color: var(--neon-accent);
-            box-shadow: var(--neon-glow);
-            transform: translateY(-2px);
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Tab Content (Pengalaman & Project) */
-        .tab-content { display: none; animation: fadeIn 0.5s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .timeline-item {
-            border-left: 2px solid var(--neon-accent);
-            padding-left: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-        .timeline-item::before {
-            content: ''; position: absolute; left: -6px; top: 0;
-            width: 10px; height: 10px; border-radius: 50%; background: var(--neon-accent); box-shadow: var(--neon-glow);
-        }
-
-        /* Slide 4: Social Media */
-        .social-container {
-            display: flex; justify-content: center; gap: 3rem; margin-top: 3rem;
-        }
-        .social-icon {
-            font-size: 4rem;
-            color: var(--text-muted);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: inline-block;
-        }
-        .social-icon:hover {
-            color: var(--neon-accent);
-            transform: scale(1.3) translateY(-10px);
-            filter: drop-shadow(0 0 15px var(--neon-accent));
-        }
-
-        /* Background Particle Effect (Simple CSS) */
-        .bg-lines {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
-            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px),
-            linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-            background-size: 50px 50px; opacity: 0.2;
-        }
-
-        /* Responsive Styles (Mobile & Tablet) */
-        @media (max-width: 768px) {
-            body {
-                scroll-snap-type: none;
-                height: auto;
-                overflow-y: auto;
-            }
-            .slide {
-                height: auto;
-                min-height: 100vh;
-                scroll-snap-align: none;
-                padding: 1.5rem 1rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .glass-card {
-                padding: 1.5rem;
-                margin-top: 1rem;
-                margin-bottom: 1rem;
-            }
-            .grid-2 {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-            .social-container {
-                gap: 1.5rem;
-            }
-            .social-icon {
-                font-size: 3rem;
-            }
-            .profile-img {
-                width: 150px;
-                height: 150px;
-            }
+        /* Responsif */
+        @media(max-width: 900px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.col-2 { grid-column: span 1; }
+            .project-grid { grid-template-columns: 1fr; }
+            .exp-item { flex-direction: column; }
         }
     </style>
 </head>
-<body>
-    <div class="bg-lines"></div>
+<body class="noise">
 
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- SLIDE 1: PROFIL (Bento Box) -->
     <section class="slide" id="profil">
-        <div class="glass-card">
-            <div class="grid-2">
-                <div>
-                    <img src="https://via.placeholder.com/200" alt="Foto D'Qhaizhar" class="profile-img">
-                </div>
-                <div>
-                    <h1>D'Qhaizhar Ari Dhiaulhaq</h1>
-                    <p style="color: var(--neon-accent); margin-bottom: 1rem; font-weight: bold;">
-                        Mahasiswa Teknologi Informasi ITS | NRP: 5027251083
+        <h2 class="section-title">Profil</h2>
+        <div class="bento-grid">
+            <!-- Kartu Utama -->
+            <div class="bento-card col-2 row-2 tilt-card interactive">
+                <div class="bento-content">
+                    <img src="https://via.placeholder.com/80" alt="Avatar" class="profile-img">
+                    <h1 style="font-size: 2.5rem; margin-bottom: 10px;">D'Qhaizhar Ari Dhiaulhaq</h1>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px;">
+                        Mahasiswa Teknologi Informasi ITS. NRP 5027251083. <br>
+                        Berfokus pada Cybersecurity, Digital Forensics, Data Analysis, & Software Development. 
                     </p>
-                    <p style="margin-bottom: 1rem; line-height: 1.6; color: var(--text-muted);">
-                        Cepat beradaptasi, mampu bekerja di bawah tekanan, dan memiliki semangat belajar tinggi. 
-                        Memiliki pengalaman luas dalam kepemimpinan, administrasi, dan desain grafis. 
-                        Sangat meminati pengembangan perangkat lunak, cybersecurity, digital forensics, serta data analysis.
-                    </p>
-                    <div style="margin-bottom: 1rem;">
-                        <strong>Pendidikan:</strong><br>
-                        • Institut Teknologi Sepuluh Nopember (IPK 3.05)<br>
-                        • SMA Negeri 11 Kota Bekasi (Nilai Akhir 90,75)
-                    </div>
                     <div>
-                        <span class="skills-tag">C/C++</span>
-                        <span class="skills-tag">Python</span>
-                        <span class="skills-tag">Java</span>
-                        <span class="skills-tag">SQL</span>
-                        <span class="skills-tag">Event Management</span>
-                        <span class="skills-tag">Canva & Desain</span>
+                        <span class="tag-pill">C / C++</span>
+                        <span class="tag-pill">Python</span>
+                        <span class="tag-pill">SQL</span>
+                        <span class="tag-pill">HTML / JS</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="slide" id="pengalaman">
-        <div class="glass-card">
-            <h2 class="text-center">Riwayat Pengalaman</h2>
-            <div class="btn-group">
-                <button class="cyber-btn active" data-target="org-exp" onclick="switchTab('pengalaman', 'org-exp')">Organisasi & Kepanitiaan</button>
-                <button class="cyber-btn" data-target="work-exp" onclick="switchTab('pengalaman', 'work-exp')">Pengalaman Kerja</button>
-            </div>
-
-            <div id="org-exp" class="tab-content active">
-                <div class="timeline-item">
-                    <h3>Ketua Fasilitator - Maju Bersama OSIS</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Juni 2025 - Sekarang</p>
-                    <p>Memberikan arahan, mengawasi anggota, dan mendengarkan evaluasi guna memperbaiki kualitas kepemimpinan.</p>
-                </div>
-                <div class="timeline-item">
-                    <h3>Co-Founder - Duta Literasi Digital Indonesia</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Feb 2025 - Sekarang</p>
-                    <p>Melakukan branding, manajemen SDM, pengelolaan pendanaan, dan pengawasan anggota duta.</p>
-                </div>
-                <div class="timeline-item">
-                    <h3>Staff Divisi Event - Elite X Pesraf 2026 & ARA 7.0</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">2025 - 2026</p>
-                    <p>Membuat guidebook, rundown, dan menjadi koordinator acara serta MC untuk kompetisi.</p>
-                </div>
-            </div>
-
-            <div id="work-exp" class="tab-content">
-                <div class="timeline-item">
-                    <h3>Graphic Design & Content Creator - Coco Edukasi Indonesia</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Januari 2023</p>
-                    <p>Merancang poster kegiatan edukasi, menyusun narasi promosi video, dan mengisi suara narator.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="slide" id="project">
-        <div class="glass-card">
-            <h2 class="text-center">Showcase Project</h2>
-            <div class="btn-group">
-                <button class="cyber-btn active" onclick="filterProject('all')">Semua Waktu</button>
-                <button class="cyber-btn" onclick="filterProject('kuliah')">Tugas Kuliah</button>
-                <button class="cyber-btn" onclick="filterProject('pribadi')">Project Pribadi</button>
-                <button class="cyber-btn" onclick="filterProject('bersama')">Project Bersama</button>
-            </div>
-
-            <div class="grid-2">
-                <div class="timeline-item project-item" data-type="pribadi">
-                    <h3>B2B Supplier Matchmaking Platform</h3>
-                    <span class="skills-tag">Project Pribadi</span> <span class="skills-tag">2026</span>
-                    <p style="margin-top: 10px;">Konseptualisasi dan pengembangan platform aplikasi yang menghubungkan supplier barang regional secara efisien.</p>
-                </div>
-                <div class="timeline-item project-item" data-type="bersama">
-                    <h3>Disaster Resilience Tracking App</h3>
-                    <span class="skills-tag">Project Bersama</span> <span class="skills-tag">Feb 2026</span>
-                    <p style="margin-top: 10px;">Dikembangkan dalam event Borneo Hackwknd bersama tim (Fio, Evan, dan Puput) untuk format respons kebencanaan.</p>
-                </div>
-                <div class="timeline-item project-item" data-type="kuliah">
-                    <h3>Visi & Identitas Angkatan "Eternity"</h3>
-                    <span class="skills-tag">Tugas Kuliah</span> <span class="skills-tag">April 2026</span>
-                    <p style="margin-top: 10px;">Merancang prinsip organisasi dan kerangka visi untuk angkatan ke-8 program studi.</p>
-                </div>
-                 <div class="timeline-item project-item" data-type="pribadi">
-                    <h3>Analisis Tren Pasar (Stockbit)</h3>
-                    <span class="skills-tag">Project Pribadi</span> <span class="skills-tag">April 2026</span>
-                    <p style="margin-top: 10px;">Evaluasi aktivitas pasar finansial dan pengaturan parameter trading untuk portofolio ekuitas.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="slide" id="sosial">
-        <div class="glass-card text-center" style="max-width: 600px;">
-            <h1 style="font-size: 3rem; margin-bottom: 0;">CONTACT ME!</h1>
-            <p style="color: var(--text-muted); margin-top: 10px;">Mari terhubung dan berkolaborasi.</p>
             
-            <div class="social-container">
-                <a href="https://wa.me/6282261610521" target="_blank" class="social-icon" title="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://instagram.com/" target="_blank" class="social-icon" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://linkedin.com/in/d-qhaizhar-ari-dhiaulhaq" target="_blank" class="social-icon" title="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
+            <!-- Kartu Pendidikan -->
+            <div class="bento-card tilt-card interactive">
+                <div class="bento-content">
+                    <h3 style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">PENDIDIKAN</h3>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 5px;">ITS</h2>
+                    <p>IPK 3.05</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">(2025 - Sekarang)</p>
+                </div>
+            </div>
+
+            <!-- Kartu Pendidikan 2 -->
+            <div class="bento-card tilt-card interactive">
+                <div class="bento-content">
+                    <h3 style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">SEKOLAH</h3>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 5px;">SMAN 11 Bekasi</h2>
+                    <p>Nilai Akhir 90.75</p>
+                </div>
+            </div>
+
+            <!-- Kartu Minat -->
+            <div class="bento-card col-2 tilt-card interactive">
+                <div class="bento-content">
+                    <h3 style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">SOFT SKILL & HOBI</h3>
+                    <p>Kepemimpinan, Public Speaking, Event Management, Canva, Stock Trading, & Badminton.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <script src="app.js"></script>
+    <!-- SLIDE 2: PENGALAMAN (Tabs & List) -->
+    <section class="slide" id="pengalaman">
+        <h2 class="section-title" style="margin-bottom: 0;">Pengalaman</h2>
+        
+        <div class="filter-container">
+            <div class="magnetic-wrap"><button class="btn-magnetic interactive active" onclick="switchExp('org')">Organisasi / Kepanitiaan</button></div>
+            <div class="magnetic-wrap"><button class="btn-magnetic interactive" onclick="switchExp('work')">Pengalaman Kerja</button></div>
+        </div>
+
+        <div id="org" class="exp-content active">
+            <div class="exp-item interactive">
+                <div>
+                    <h3>Maju Bersama OSIS</h3>
+                    <span class="tag-pill" style="margin-top: 10px;">Ketua Fasilitator</span>
+                </div>
+                <span>Juni 2025 - Sekarang</span>
+            </div>
+            <div class="exp-item interactive">
+                <div>
+                    <h3>Duta Literasi Digital Indonesia</h3>
+                    <span class="tag-pill" style="margin-top: 10px;">Co-Founder</span>
+                </div>
+                <span>Februari 2025 - Sekarang</span>
+            </div>
+            <div class="exp-item interactive">
+                <div>
+                    <h3>Elite X Pesraf 2026 & ARA 7.0</h3>
+                    <span class="tag-pill" style="margin-top: 10px;">Staff Divisi Event & MC</span>
+                </div>
+                <span>2025 - 2026</span>
+            </div>
+        </div>
+
+        <div id="work" class="exp-content">
+            <div class="exp-item interactive">
+                <div>
+                    <h3>Coco Edukasi Indonesia</h3>
+                    <p style="color: var(--text-muted); margin-top: 5px;">Merancang poster, narasi promosi, & pengisi suara.</p>
+                    <span class="tag-pill" style="margin-top: 10px;">Graphic Design & Content Creator</span>
+                </div>
+                <span>Januari 2023</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: PROJECT (Filter & Hover Reveal) -->
+    <section class="slide" id="project">
+        <h2 class="section-title" style="margin-bottom: 0;">Project</h2>
+
+        <div class="filter-container">
+            <div class="magnetic-wrap"><button class="btn-magnetic interactive active" onclick="filterProj('all')">Semua Waktu</button></div>
+            <div class="magnetic-wrap"><button class="btn-magnetic interactive" onclick="filterProj('kuliah')">Tugas Kuliah</button></div>
+            <div class="magnetic-wrap"><button class="btn-magnetic interactive" onclick="filterProj('pribadi')">Project Pribadi</button></div>
+            <div class="magnetic-wrap"><button class="btn-magnetic interactive" onclick="filterProj('bersama')">Project Bersama</button></div>
+        </div>
+
+        <div class="project-grid">
+            <div class="project-card proj-item interactive" data-type="bersama">
+                <h3>Disaster Resilience Tracking</h3>
+                <p style="margin: 15px 0;">Dibangun dalam event Borneo Hackwknd bersama Fio, Evan, dan Puput.</p>
+                <span class="tag-pill">Feb 2026</span> <span class="tag-pill">Project Bersama</span>
+            </div>
+            <div class="project-card proj-item interactive" data-type="pribadi">
+                <h3>B2B Supplier Matchmaking</h3>
+                <p style="margin: 15px 0;">Aplikasi untuk menghubungkan supplier barang regional secara efisien.</p>
+                <span class="tag-pill">2026</span> <span class="tag-pill">Project Pribadi</span>
+            </div>
+            <div class="project-card proj-item interactive" data-type="pribadi">
+                <h3>Analisis & Trading Stockbit</h3>
+                <p style="margin: 15px 0;">Evaluasi portofolio ekuitas dan parameter pasar modal (WBSA).</p>
+                <span class="tag-pill">April 2026</span> <span class="tag-pill">Project Pribadi</span>
+            </div>
+            <div class="project-card proj-item interactive" data-type="kuliah">
+                <h3>Visi Identitas "Eternity"</h3>
+                <p style="margin: 15px 0;">Merancang kerangka visi dan prinsip untuk angkatan ke-8.</p>
+                <span class="tag-pill">April 2026</span> <span class="tag-pill">Tugas Kuliah</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: SOSIAL MEDIA (Big Typography) -->
+    <section class="slide" id="sosial">
+        <div style="width: 100%; text-align: center;">
+            <h1 class="huge-contact interactive">CONTACT ME!</h1>
+            <div class="social-icons">
+                <div class="magnetic-wrap">
+                    <a href="https://wa.me/6282261610521" target="_blank" class="soc-icon interactive"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="magnetic-wrap">
+                    <a href="https://instagram.com/" target="_blank" class="soc-icon interactive"><i class="fab fa-instagram"></i></a>
+                </div>
+                <div class="magnetic-wrap">
+                    <a href="https://linkedin.com/in/d-qhaizhar-ari-dhiaulhaq" target="_blank" class="soc-icon interactive"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === JAVASCRIPT LOGIC === -->
+    <script>
+        // 1. CUSTOM CURSOR & HOVER STATES (Robin Noguier style)
+        const dot = document.querySelector('.cursor-dot');
+        const outline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            // Dot follows exactly
+            dot.style.left = `${posX}px`;
+            dot.style.top = `${posY}px`;
+            
+            // Outline follows with slight delay (requestAnimationFrame for smoothness)
+            outline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 300, fill: "forwards" });
+        });
+
+        // Add Hover effect on interactable elements
+        document.querySelectorAll('.interactive').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // 2. MAGNETIC BUTTONS (Bruno Simon style)
+        document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+            const btn = wrap.querySelector('.btn-magnetic, .soc-icon');
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const h = rect.width / 2;
+                const v = rect.height / 2;
+                const x = e.clientX - rect.left - h;
+                const y = e.clientY - rect.top - v;
+                // Pull button towards mouse
+                btn.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+            });
+            wrap.addEventListener('mouseleave', () => {
+                btn.style.transform = `translate(0px, 0px)`; // reset
+            });
+        });
+
+        // 3. 3D TILT EFFECT ON BENTO CARDS (Gamified Feel)
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            const content = card.querySelector('.bento-content');
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg
+                const rotateY = ((x - centerX) / centerX) * 10;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                card.style.transition = 'transform 0.5s ease';
+            });
+            
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'none'; // hapus transisi saat mouse di dalam agar tidak lag
+            });
+        });
+
+        // 4. TAB LOGIC (Pengalaman)
+        function switchExp(tabId) {
+            document.querySelectorAll('#pengalaman .btn-magnetic').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.exp-content').forEach(content => {
+                content.classList.remove('active');
+                content.style.animation = 'none'; // reset animasi
+            });
+            const activeContent = document.getElementById(tabId);
+            activeContent.classList.add('active');
+            // Trigger ulang animasi
+            setTimeout(() => activeContent.style.animation = 'fadeInUp 0.6s forwards', 10);
+        }
+
+        // 5. FILTER LOGIC (Project)
+        function filterProj(category) {
+            document.querySelectorAll('#project .btn-magnetic').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const projects = document.querySelectorAll('.proj-item');
+            projects.forEach(proj => {
+                proj.style.display = 'none'; // sembunyikan semua
+                if (category === 'all' || proj.dataset.type === category) {
+                    setTimeout(() => {
+                        proj.style.display = 'block';
+                        proj.style.animation = 'fadeInUp 0.5s forwards';
+                    }, 50);
+                }
+            });
+        }
+    </script>
 </body>
 </html>
